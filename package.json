@@ -10,9 +10,9 @@
   "scripts": {
     "build": "npm run clean && tsc",
     "clean": "shx rm -rf ./dist/*",
-    "publish-major": "npm version major && git add . && git commit -m \"bump major version\" && git push && npm publish",
-    "publish-minor": "npm version minor && git add . && git commit -m \"bump minor version\" && git push && npm publish",
-    "publish-patch": "npm version patch && git add . && git commit -m \"bump patch version\" && git push && npm publish"
+    "publish-major": "npm version major && git add . --allow-empty && git commit -m \"bump major version\" && git push && npm publish",
+    "publish-minor": "npm version minor && git add . --allow-empty && git commit -m \"bump minor version\" && git push && npm publish",
+    "publish-patch": "npm version patch && git add . --allow-empty && git commit -m \"bump patch version\" && git push && npm publish"
   },
   "repository": {
     "type": "git",
