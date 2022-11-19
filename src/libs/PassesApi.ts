@@ -499,12 +499,17 @@ class BoardingPass extends Pass {
 
     setOrigin(flight: Partial<BoardingPass_Flight>) {
         this.dataC.origin["airportIataCode"] = flight["from_to"][0]["short"];
+        
+        let ter: string | string[] = flight["departure_terminal"];
+        let ite = 1;
 
-        let ter = flight["departure_terminal"];
         if (ter === "") {
             ter = "...."
         } else {
-            ter = ter.split(" ")[1];
+            ter = ter.split(" ");
+            if(ter[1] === "Terminal") { ite = 2; }
+
+            ter = ter[ite];
         }
 
         this.dataC.origin["terminal"] = ter;
