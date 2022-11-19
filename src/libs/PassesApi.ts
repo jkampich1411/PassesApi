@@ -48,7 +48,6 @@ class Pass {
         this._classUrl = classUrl;
 
         this._init = setup
-
     }
 
     getFinalObjects() {
