@@ -283,7 +283,7 @@ class BoardingPass extends Pass {
         }
     }
 
-    prepare(data: any) {
+    prepare(data: BoardingPass_Pass) {
         this.setBarcode(data["barcode"]);
         // Barcode set!
 
@@ -324,13 +324,13 @@ class BoardingPass extends Pass {
         this.setLocations(data["locations"]);
     }
 
-    setBarcode(barcode: any) {
+    setBarcode(barcode: Barcode) {
         this.dataO.barcode["type"] = barcode["format"];
         this.dataO.barcode["value"] = barcode["message"];
         this.dataO.barcode["alternateText"] = barcode["altText"];
     }
     
-    setBrdStnInfo(flight: Partial<any>) {
+    setBrdStnInfo(flight: Partial<BoardingPass_Flight>) {
         let brdstn = this.dataO.boardingAndSeatingInfo;
 
         brdstn["boardingGroup"] = flight["boarding_group"];
@@ -359,7 +359,7 @@ class BoardingPass extends Pass {
         delete brdstn["seatAssignment"];
     }
     
-    setReservInfo(person: Partial<any>) {
+    setReservInfo(person: Partial<BoardingPass_Person>) {
         let reserv = this.dataO.reservationInfo;
 
         reserv["confirmationCode"] = person["reference"];
@@ -378,7 +378,7 @@ class BoardingPass extends Pass {
         reserv.frequentFlyerInfo["frequentFlyerNumber"] = person["ff_number"];
     }
     
-    setDepartTime(flight: Partial<any>) {
+    setDepartTime(flight: Partial<BoardingPass_Flight>) {
         let depTimeUtc = new Date(flight["departure_time_utc"]);
         let depTime = flight["departure_time"];
         let depHour = depTime.split(":")[0];
@@ -425,7 +425,7 @@ class BoardingPass extends Pass {
         this.dataC.localScheduledDepartureDateTime = tempIso.join("");
     }
     
-    setBoardingTime(flight: Partial<any>) {
+    setBoardingTime(flight: Partial<BoardingPass_Flight>) {
         let depTime = new Date(flight["departure_time_utc"]);
         let brdTime = flight["boarding_time"];
         let brdHour = brdTime.split(":")[0];
@@ -472,7 +472,7 @@ class BoardingPass extends Pass {
         this.dataC.localBoardingDateTime = tempIso.join("");
     }
     
-    setCarrier(flight: Partial<any>) {
+    setCarrier(flight: Partial<BoardingPass_Flight>) {
         this.dataC.flightHeader["flightNumber"] = flight["flightnumber"]
         this.dataC.flightHeader["operatingFlightNumber"] = flight["flightnumber"]
 
@@ -498,7 +498,7 @@ class BoardingPass extends Pass {
         return;
     }
 
-    setOrigin(flight: Partial<any>) {
+    setOrigin(flight: Partial<BoardingPass_Flight>) {
         this.dataC.origin["airportIataCode"] = flight["from_to"][0]["short"];
 
         let ter = flight["departure_terminal"];
@@ -512,7 +512,7 @@ class BoardingPass extends Pass {
         this.dataC.origin["gate"] = flight["gate"];
     }
 
-    setDestination(flight: Partial<any>) {
+    setDestination(flight: Partial<BoardingPass_Flight>) {
         this.dataC.destination["airportIataCode"] = flight["from_to"][1]["short"];
     }
     
@@ -525,7 +525,7 @@ class BoardingPass extends Pass {
         this.dataC.heroImage = heroImage;
     }
 
-    setLocations(loc: Array<any>) {
+    setLocations(loc: Array<Location>) {
         loc.forEach(each => {
             let loc = {
                 "latitude": each["latitude"],
