@@ -1,0 +1,27 @@
+{
+  "name": "@jkdev/passesapi",
+  "version": "1.1.0",
+  "description": "API for Google Wallet Passes",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist"
+  ],
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "copy": "shx cp -r ./src/types ./dist/types",
+    "clean": "shx rm -rf ./dist/*"
+  },
+  "author": "jkampich1411",
+  "license": "ISC",
+  "dependencies": {
+    "google-auth-library": "^8.7.0",
+    "jsonwebtoken": "^8.5.1",
+    "typescript": "next"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^8.5.9",
+    "@types/node": "^18.11.9",
+    "shx": "^0.3.4"
+  }
+}
