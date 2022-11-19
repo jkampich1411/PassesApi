@@ -501,15 +501,12 @@ class BoardingPass extends Pass {
         this.dataC.origin["airportIataCode"] = flight["from_to"][0]["short"];
         
         let ter: string | string[] = flight["departure_terminal"];
-        let ite = 1;
 
         if (ter === "") {
             ter = "...."
         } else {
             ter = ter.split(" ");
-            if(ter[1] === "Terminal") { ite = 2; }
-
-            ter = ter[ite];
+            ter = ter[ter.length-1];
         }
 
         this.dataC.origin["terminal"] = ter;
