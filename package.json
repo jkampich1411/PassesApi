@@ -1,5 +1,5 @@
 {
-  "name": "@jkdev/passesapi",
+  "name": "@jkampich1411/passesapi",
   "version": "1.1.0",
   "description": "API for Google Wallet Passes",
   "main": "./dist/index.js",
@@ -9,8 +9,11 @@
   ],
   "scripts": {
     "build": "npm run clean && tsc",
-    "copy": "shx cp -r ./src/types ./dist/types",
     "clean": "shx rm -rf ./dist/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jkampich1411/PassesApi.git"
   },
   "author": "jkampich1411",
   "license": "ISC",
