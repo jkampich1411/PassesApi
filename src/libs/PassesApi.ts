@@ -1,5 +1,5 @@
 import * as google from 'google-auth-library';
-import jwt from 'jsonwebtoken';
+import { sign as JwtSign } from 'jsonwebtoken';
 
 const URL_PREFIX = "https://walletobjects.googleapis.com/walletobjects/v1/";
 const SCOPES = [
@@ -65,7 +65,7 @@ class Pass {
     }
 
     createJwt() {
-        return jwt.sign({
+        return JwtSign({
             "iss": this._init.credentials.client_email,
             "aud": "google",
             "origins": ["https://apis.jkdev.run/"],
