@@ -41,4 +41,4 @@ const CREDENTIALS = JSON.parse(
 const SETUP = new Setup(CREDENTIALS, ISSUER_ID);
 ```
 
-5. Now you can use any class! Just pass the `SETUP` variable to any Class!
+5. Now you can use any class! Just pass the `SETUP` variable to any class!
