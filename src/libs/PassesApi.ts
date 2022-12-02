@@ -43,6 +43,10 @@ class Pass {
 
     _init: Setup;
 
+    _className: string;
+    dataC: any;
+    dataO: any;
+
     constructor(objectUrl: string, classUrl: string, setup: Setup) {
         this._objectUrl = objectUrl;
         this._classUrl = classUrl;
@@ -219,7 +223,6 @@ class BoardingPass extends Pass {
         "hexBackgroundColor": ""
     }
 
-    _className
     dataC
     dataO
 
@@ -237,8 +240,8 @@ class BoardingPass extends Pass {
         this.dataC.id = this._classId;
         
         this.dataO = this._object_template;
-        this.dataO.classId = `${this._init.issuer_id}.${this._className}`
-        this.dataO.id = this._objectId
+        this.dataO.classId = `${this._init.issuer_id}.${this._className}`;
+        this.dataO.id = this._objectId;
     }
 
     static async genFromGoogle(id: string, setup: Setup) {
@@ -537,6 +540,137 @@ class BoardingPass extends Pass {
     }
 }
 
+class GenericPass extends Pass {
+    _object_template: any = {
+        "cardTitle": {}, // LocalizedString!
+        "subheader": {}, // LocalizedString!
+        "header": {}, // LocalizedString!
+        "logo": {}, // Image!
+        "hexBackgroundColor": "",
+        "notifications": {
+            "expiryNotification": {
+                "enableNotification": false
+            },
+            "upcomingNotification": {
+                "enableNotification": false
+            }
+        },
+        "id": "",
+        "classId": "",
+        "barcode": {
+        },
+        "heroImage": {}, // Image!
+        "validTimeInterval": {
+            "start": {
+                "date": "" // ISO8601 opt offset
+            },
+            "end": {
+                "date": "" // ISO8601 opt offset req if start offset
+            }
+        },
+        "imageModulesData": [
+            {
+                "mainImage": {}, // Image!
+                "id": ""
+            }
+        ],
+        "textModulesData": [
+            {
+                "header": "",
+                "body": "",
+                "localizedHeader": {}, // LocalizedString!
+                "localizedBody": {}, // LocalizedString!
+                "id": ""
+            }
+        ],
+        "linksModuleData": {
+            "uris": [
+                {
+                    "uri": "",
+                    "description": "",
+                    "localizedDescription": {}, // LocalizedString!
+                    "id": ""
+                }
+            ]
+        },
+        "groupingInfo": {
+            "sortIndex": 0,
+            "groupingId": ""
+        },
+        "smartTapRedemptionValue": "",
+        "rotatingBarcode": {
+            "type": "", // interface BarcodeType,
+            "valuePattern": "",
+            "totpDetails": {
+                "periodMillis": "", // int64
+                "algorithm": "", // interface totpAlgorithm
+                "parameters": [{
+                    "key": "",
+                    "valueLength": 0
+                }],
+                "alternateText": "",
+                "showCodeText": {} // LocalizedString!
+            }
+        },
+        "state": ""
+    };
+
+    _class_template: any = {
+        "id": "",
+        "classTemplateInfo": {
+            
+        },
+        "imageModulesData": [
+            {
+                "mainImage": {}, // Image!
+                "id": ""
+            }
+        ],
+        "textModulesData": [
+            {
+                "header": "",
+                "body": "",
+                "localizedHeader": {}, // LocalizedString!
+                "localizedBody": {}, // LocalizedString!
+                "id": ""
+            }
+        ],
+        "linksModuleData": {
+            "uris": [
+                {
+                    "uri": "",
+                    "description": "",
+                    "localizedDescription": {}, // LocalizedString!
+                    "id": ""
+                }
+            ]
+        },
+        "enableSmartTap": false,
+        "redemptionIssuers": [],
+        "securityAnimation": {
+            "animationType": "" // type animationType
+        },
+        "multipleDevicesAndHoldersAllowedStatus": "", // type multipleDevicesAndHoldersAllowedStatusType,
+        "viewUnlockRequirement": "" // type viewUnlockRequirementType
+    };
+
+    constructor(uid: string, setup: Setup) {
+        let objectUrl = URL_PREFIX + 'genericObject';
+        let classUrl = URL_PREFIX + 'genericClass';
+        super(objectUrl, classUrl, setup);
+
+        this._className = `${uid.replace(/[^\w.-]/g, '_').replace(/([\.])/g, '_')}`;
+        this._objectId = `${this._init.issuer_id}.${uid.replace(/[^\w.-]/g, '_').replace(/([\.])/g, '_')}`
+        this._classId = `${this._init.issuer_id}.${this._className}`
+        
+        this.dataC = this._class_template;
+        this.dataC.id = this._classId;
+        
+        this.dataO = this._object_template;
+        this.dataO.classId = `${this._init.issuer_id}.${this._className}`;
+        this.dataO.id = this._objectId;
+    }
+}
 
 // How to make an image
 // () => {
@@ -604,10 +738,18 @@ interface TranslatedString {
 }
 
 export interface Barcode {
-    format: "AZTEC";
+    format: BarcodeType;
     altText: string;
     message: string;
 }
+
+export type BarcodeType = "AZTEC" | "CODE_39" | "CODE_128" | "CODABAR" | "DATA_MATRIX" | "EAN_8" | "EAN_13" | "ITF_14" | "PDF_417" | "QR_CODE" | "UPC_A" | "TEXT_ONLY";
+export type totpAlgorithm = "TOTP_ALGORITHM_UNSPECIFIED" | "TOTP_SHA1";
+export type animationType = "ANIMATION_UNSPECIFIED" | "FOIL_SHIMMER";
+export type multipleDevicesAndHoldersAllowedStatusType = "STATUS_UNSPECIFIED" | "MULTIPLE_HOLDERS" | "ONE_USER_ALL_DEVICES" | "ONE_USER_ONE_DEVICE";
+export type viewUnlockRequirementType = "VIEW_UNLOCK_REQUIREMENT_UNSPECIFIED" | "UNLOCK_NOT_REQUIRED" | "UNLOCK_REQUIRED_TO_VIEW" 
+
+
 
 export interface Location {
     latitude: Number;
