@@ -565,7 +565,7 @@ class GenericPass extends Pass {
                 "date": "" // ISO8601 opt offset
             },
             "end": {
-                "date": "" // ISO8601 opt offset req if start offset
+                "date": "" // ISO8601 opt offset !!req if start offset
             }
         },
         "imageModulesData": [
