@@ -15,7 +15,7 @@ This is a utility package to create [Google Wallet](https://developers.google.co
 |Transit passes|❌|Part coming soon!|
 |Generic Pass|❌|Coming soon!¹|
 
-*¹ Probably within a month*
+*¹ Probably before christmas!*
 
 ### Quick Start Tutorial
 1. First, you need to setup a Google Wallet issuer account
