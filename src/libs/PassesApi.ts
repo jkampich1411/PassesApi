@@ -159,6 +159,11 @@ class Pass {
         return resp;
     }
 
+    async submitAll(performPut = false) {
+        await this.admitClsToGoogle(performPut);
+        await this.admitObjToGoogle(performPut);
+    }
+
 }
 
 class BoardingPass extends Pass {
@@ -271,8 +276,8 @@ class BoardingPass extends Pass {
 
             objecD.classReference = undefined;
             
-            that._class_template = classD;
-            that._object_template = objecD;
+            that.dataC = classD;
+            that.dataO = objecD;
 
             that._postable = false;
 
@@ -291,12 +296,8 @@ class BoardingPass extends Pass {
         this.setBarcode(data["barcode"]);
         // Barcode set!
 
-        this.dataO.hexBackgroundColor = data["bgcolor"];
-        this.dataC.hexBackgroundColor = data["bgcolor"];
-        // Background color set!
-
-        this.dataO.passengerName = data["person"]["name"];
-        // Passenger name set!
+        this.setBackgroundColour(data["bgcolour"]);
+        // Background colour set!
 
         this.setBrdStnInfo(data["flight"]);
         // Boarding Seating Info set!
@@ -325,10 +326,19 @@ class BoardingPass extends Pass {
         this.setHeroImage(data["flight"]["carrier_label"]);
         // Hero Image set!
 
-        this.dataC["issuerName"] = data["flight"]["carrier_label"];
+        this.setAirlineName(data["flight"]["carrier_label"]);
         // Airline name set!
 
         this.setLocations(data["locations"]);
+    }
+
+    setAirlineName(carrier_label: string) {
+        this.dataC["issuerName"] = carrier_label;
+    }
+
+    setBackgroundColour(hex: string) {
+        this.dataO.hexBackgroundColor = hex;
+        this.dataC.hexBackgroundColor = hex;
     }
 
     setBarcode(barcode: Barcode) {
@@ -367,6 +377,8 @@ class BoardingPass extends Pass {
     }
     
     setReservInfo(person: Partial<BoardingPass_Person>) {
+        this.dataO.passengerName = person.name;
+
         let reserv = this.dataO.reservationInfo;
 
         reserv["confirmationCode"] = person["reference"];
@@ -588,12 +600,12 @@ class GenericPass extends Pass {
                 "date": "" // ISO8601 opt offset !!req if start offset
             }
         },
-        "imageModulesData": [
+        "imageModulesData": [ // _imdTemp
         ],
-        "textModulesData": [
+        "textModulesData": [ // _tmdTemp
         ],
         "linksModuleData": {
-            "uris": [
+            "uris": [ // _lmdTemp
             ]
         },
         "groupingInfo": {
@@ -601,19 +613,7 @@ class GenericPass extends Pass {
             "groupingId": ""
         },
         "smartTapRedemptionValue": "",
-        "rotatingBarcode": {
-            "type": "", // interface BarcodeType,
-            "valuePattern": "",
-            "totpDetails": {
-                "periodMillis": "", // string rep of Number()
-                "algorithm": "", // interface totpAlgorithm
-                "parameters": [{
-                    "key": "",
-                    "valueLength": 0
-                }],
-                "alternateText": "",
-                "showCodeText": {} // LocalizedString!
-            }
+        "rotatingBarcode": { // interface RotatingBarcode
         },
         "state": ""
     };
@@ -640,23 +640,23 @@ class GenericPass extends Pass {
 
     _class_template: any = {
         "id": "",
-        "classTemplateInfo": {
+        "classTemplateInfo": { // honestly I have no Idea what this does
         },
-        "imageModulesData": [
+        "imageModulesData": [ // _imdTemp
         ],
-        "textModulesData": [
+        "textModulesData": [ // _tmdTemp
         ],
         "linksModuleData": {
-            "uris": [
+            "uris": [ // _lmdTemp
             ]
         },
         "enableSmartTap": false,
         "redemptionIssuers": [],
         "securityAnimation": {
-            "animationType": "" // type animationType
+            "animationType": "" // type AnimationType
         },
-        "multipleDevicesAndHoldersAllowedStatus": "", // type multipleDevicesAndHoldersAllowedStatusType,
-        "viewUnlockRequirement": "" // type viewUnlockRequirementType
+        "multipleDevicesAndHoldersAllowedStatus": "", // type MultipleDevicesAndHoldersAllowedStatusType,
+        "viewUnlockRequirement": "" // type ViewUnlockRequirementType
     };
 
     constructor(uid: string, setup: Setup) {
@@ -675,6 +675,47 @@ class GenericPass extends Pass {
         this.dataO.classId = `${this._init.issuer_id}.${this._className}`;
         this.dataO.id = this._objectId;
     };
+
+    static async genFromGoogle(id: string, setup: Setup) {
+        let that = new this(id, setup);
+
+        that._className = id;
+        that._classId = `${that._init.issuer_id}.${id}`;
+        that._objectId = `${that._init.issuer_id}.${id}`;
+
+        try {
+
+            let classRes = await that._init.google_client.request({
+                url: `${that._classUrl}/${that._classId}`,
+                method: "GET"
+            });
+
+
+            let objecRes = await that._init.google_client.request({
+                url: `${that._objectUrl}/${that._objectId}`,
+                method: "GET"
+            });
+            
+            let classD = classRes.data;
+            let objecD = objecRes.data;
+
+            objecD.classReference = undefined;
+            
+            that.dataC = classD;
+            that.dataO = objecD;
+
+            that._postable = false;
+
+            return that;
+
+        } catch (e: any) {
+            let r = e.response;
+
+            if(r && r.status === 404) {
+                return false;
+            }
+        }
+    }
 
     setValidTimeInterval(start: Date, end?: Date) {
         let startIso = createISO8601(start);
@@ -700,10 +741,23 @@ class GenericPass extends Pass {
         this.dataO.heroImage = image;
     }
 
+    setLogoImage(image: WalletImage) {
+        this.dataO.logo = image;
+    }
+
     setBarcode(barcode: Barcode) {
         this.dataO.barcode["type"] = barcode["format"];
         this.dataO.barcode["value"] = barcode["message"];
         this.dataO.barcode["alternateText"] = barcode["altText"];
+    }
+
+    setBackgroundColour(hex: string) {
+        this.dataC.hexBackgroundColor = hex;
+    }
+
+    addRedemptionIssuer(issuerId: string | number) {
+        this.dataC.enableSmartTap = true;
+        this.dataC.redemptionIssuers.push(issuerId);
     }
 }
 
@@ -779,10 +833,10 @@ export interface Barcode {
 }
 
 export type BarcodeType = "AZTEC" | "CODE_39" | "CODE_128" | "CODABAR" | "DATA_MATRIX" | "EAN_8" | "EAN_13" | "ITF_14" | "PDF_417" | "QR_CODE" | "UPC_A" | "TEXT_ONLY";
-export type totpAlgorithm = "TOTP_ALGORITHM_UNSPECIFIED" | "TOTP_SHA1";
-export type animationType = "ANIMATION_UNSPECIFIED" | "FOIL_SHIMMER";
-export type multipleDevicesAndHoldersAllowedStatusType = "STATUS_UNSPECIFIED" | "MULTIPLE_HOLDERS" | "ONE_USER_ALL_DEVICES" | "ONE_USER_ONE_DEVICE";
-export type viewUnlockRequirementType = "VIEW_UNLOCK_REQUIREMENT_UNSPECIFIED" | "UNLOCK_NOT_REQUIRED" | "UNLOCK_REQUIRED_TO_VIEW" 
+export type TotpAlgorithm = "TOTP_ALGORITHM_UNSPECIFIED" | "TOTP_SHA1";
+export type AnimationType = "ANIMATION_UNSPECIFIED" | "FOIL_SHIMMER";
+export type MultipleDevicesAndHoldersAllowedStatusType = "STATUS_UNSPECIFIED" | "MULTIPLE_HOLDERS" | "ONE_USER_ALL_DEVICES" | "ONE_USER_ONE_DEVICE";
+export type ViewUnlockRequirementType = "VIEW_UNLOCK_REQUIREMENT_UNSPECIFIED" | "UNLOCK_NOT_REQUIRED" | "UNLOCK_REQUIRED_TO_VIEW" 
 
 
 
@@ -792,12 +846,29 @@ export interface Location {
     relevantText: string;
 }
 
+export interface RotatingBarcode {
+    type: BarcodeType;
+    valuePattern: string;
+    totpDetails: TotpDetails
+}
 
+export interface TotpParameter {
+    key: string,
+    valueLength: number
+}
+
+export interface TotpDetails {
+    periodMillis: string; // string rep of Number()
+    algorithm: TotpAlgorithm;
+    parameters: Array<TotpParameter>;
+    alternateText: string;
+    showCodeText: LocalizedString;
+}
 
 
 export interface BoardingPass_Pass {
     boardingIdentifier: string;
-    bgcolor: string;
+    bgcolour: string;
     locations: Array<Location>;
 
     flight: BoardingPass_Flight;

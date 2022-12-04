@@ -1,6 +1,6 @@
-export function createISO8601(date: Date): string {
-    let phour = date.getHours(),
-        pminute = date.getMinutes()
+export function createISO8601(date: Date, time?: string): string {
+    let phour = time.split(":")[0] || date.getHours(),
+        pminute = time.split(":")[1] || date.getMinutes()
 
     let tempDate = new Date();
     tempDate.setDate(date.getDate());
