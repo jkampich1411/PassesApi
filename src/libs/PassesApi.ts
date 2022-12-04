@@ -1,6 +1,8 @@
 import * as google from 'google-auth-library';
 import { sign as JwtSign } from 'jsonwebtoken';
 
+import { createISO8601 } from './utils';
+
 const URL_PREFIX = "https://walletobjects.googleapis.com/walletobjects/v1/";
 const SCOPES = [
     "https://www.googleapis.com/auth/wallet_object.issuer"
@@ -311,6 +313,9 @@ class BoardingPass extends Pass {
         this.setCarrier(data["flight"]);
         // Carrier set!
 
+        this.setAirlineLogo(data["flight"]["carrier_label"]);
+        // Airline Logo Set
+
         this.setOrigin(data["flight"]);
         // Origin set!
 
@@ -473,17 +478,28 @@ class BoardingPass extends Pass {
 
         this.dataC.localBoardingDateTime = tempIso.join("");
     }
+
+    setAirlineLogo(label: string, url?: string) {
+        if(!url) {    
+            let airLnLogo = WalletImage.generate(images[label.toLowerCase()]["logo"],
+                [{"language": "en", "value": label + " Logo Image"}],
+                {"language": "en", "value": label + " Logo Image"});
+
+            this.dataC.flightHeader["carrier"]["airlineLogo"] = airLnLogo;
+        } else {
+            let airLnLogo = WalletImage.generate(url,
+                [{"language": "en", "value": label + " Logo Image"}],
+                {"language": "en", "value": label + " Logo Image"});
+            
+            this.dataC.flightHeader["carrier"]["airlineLogo"] = airLnLogo;
+        }
+    }
     
     setCarrier(flight: Partial<BoardingPass_Flight>) {
         this.dataC.flightHeader["flightNumber"] = flight["flightnumber"]
         this.dataC.flightHeader["operatingFlightNumber"] = flight["flightnumber"]
 
         this.dataC.flightHeader["flightNumberDisplayOverride"] = flight["flightnumber_label"]
-
-        let airLnLogo = WalletImage.generate(images[flight["carrier_label"].toLowerCase()]["logo"],
-            [{"language": "en", "value": flight["carrier_label"] + " Logo Image"}],
-            {"language": "en", "value": flight["carrier_label"] + " Logo Image"}
-        );
 
         let airLnName = Langs.genLocalString(
             [{"language": "en", "value": flight["carrier_label"]}],
@@ -492,7 +508,6 @@ class BoardingPass extends Pass {
 
         let carrier = this.dataC.flightHeader["carrier"];
         carrier["carrierIataCode"] = flight["carrier"]
-        carrier["airlineLogo"] = airLnLogo;
         carrier["airlineName"] = airLnName;
 
         this.dataC.flightHeader["operatingCarrier"] = carrier;
@@ -520,13 +535,18 @@ class BoardingPass extends Pass {
         this.dataC.destination["airportIataCode"] = flight["from_to"][1]["short"];
     }
     
-    setHeroImage(carrier_label: string) {
-        let heroImage = WalletImage.generate(images[carrier_label.toLowerCase()]["hero"], 
-            [{"language": "en", "value": carrier_label + " Hero Image"}],
-            {"language": "en", "value": carrier_label + " Hero Image"}
-        )
-
-        this.dataC.heroImage = heroImage;
+    setHeroImage(label: string, url?: string) {
+        if(url) {
+            let heroImage = WalletImage.generate(images[label.toLowerCase()]["hero"], 
+                [{"language": "en", "value": label + " Hero Image"}],
+                {"language": "en", "value": label + " Hero Image"});
+            this.dataC.heroImage = heroImage;
+        } else {
+            let heroImage = WalletImage.generate(url,
+                [{"language": "en", "value": label + " Hero Image"}],
+                {"language": "en", "value": label + " Hero Image"});
+            this.dataC.heroImage = heroImage;
+        }
     }
 
     setLocations(loc: Array<Location>) {
@@ -569,28 +589,11 @@ class GenericPass extends Pass {
             }
         },
         "imageModulesData": [
-            {
-                "mainImage": {}, // Image!
-                "id": ""
-            }
         ],
         "textModulesData": [
-            {
-                "header": "",
-                "body": "",
-                "localizedHeader": {}, // LocalizedString!
-                "localizedBody": {}, // LocalizedString!
-                "id": ""
-            }
         ],
         "linksModuleData": {
             "uris": [
-                {
-                    "uri": "",
-                    "description": "",
-                    "localizedDescription": {}, // LocalizedString!
-                    "id": ""
-                }
             ]
         },
         "groupingInfo": {
@@ -602,7 +605,7 @@ class GenericPass extends Pass {
             "type": "", // interface BarcodeType,
             "valuePattern": "",
             "totpDetails": {
-                "periodMillis": "", // int64
+                "periodMillis": "", // string rep of Number()
                 "algorithm": "", // interface totpAlgorithm
                 "parameters": [{
                     "key": "",
@@ -615,34 +618,36 @@ class GenericPass extends Pass {
         "state": ""
     };
 
+    _lmdTemp = {
+        "uri": "",
+        "description": "",
+        "localizedDescription": {}, // LocalizedString!
+        "id": ""
+    }
+
+    _tmdTemp = {
+        "header": "",
+        "body": "",
+        "localizedHeader": {}, // LocalizedString!
+        "localizedBody": {}, // LocalizedString!
+        "id": ""
+    }
+
+    _imdTemp = {
+        "mainImage": {}, // Image!
+        "id": ""
+    }
+
     _class_template: any = {
         "id": "",
         "classTemplateInfo": {
-            
         },
         "imageModulesData": [
-            {
-                "mainImage": {}, // Image!
-                "id": ""
-            }
         ],
         "textModulesData": [
-            {
-                "header": "",
-                "body": "",
-                "localizedHeader": {}, // LocalizedString!
-                "localizedBody": {}, // LocalizedString!
-                "id": ""
-            }
         ],
         "linksModuleData": {
             "uris": [
-                {
-                    "uri": "",
-                    "description": "",
-                    "localizedDescription": {}, // LocalizedString!
-                    "id": ""
-                }
             ]
         },
         "enableSmartTap": false,
@@ -669,6 +674,36 @@ class GenericPass extends Pass {
         this.dataO = this._object_template;
         this.dataO.classId = `${this._init.issuer_id}.${this._className}`;
         this.dataO.id = this._objectId;
+    };
+
+    setValidTimeInterval(start: Date, end?: Date) {
+        let startIso = createISO8601(start);
+        this.dataO["validTimeInterval"]["start"].date = startIso;
+        
+        if(end) {
+            let endIso = createISO8601(end);
+            this.dataO["validTimeInterval"]["end"].date = endIso;
+        }
+    }
+
+    enableNotifications(notifications: "all" | "expiry" | "upcoming") {
+        if(notifications === "all") {
+            let n = this.dataO["notifications"];
+            n["expiryNotification"].enableNotification = true;
+            n["upcomingNotification"].enableNotification = true;
+        } else {
+            this.dataO["notifications"][notifications + "Notification"].enableNotification = true;
+        }
+    }
+
+    setHeroImage(image: WalletImage) {
+        this.dataO.heroImage = image;
+    }
+
+    setBarcode(barcode: Barcode) {
+        this.dataO.barcode["type"] = barcode["format"];
+        this.dataO.barcode["value"] = barcode["message"];
+        this.dataO.barcode["alternateText"] = barcode["altText"];
     }
 }
 
