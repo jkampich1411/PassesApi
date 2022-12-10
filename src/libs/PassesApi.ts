@@ -57,14 +57,14 @@ class Pass {
     }
 
     getFinalObjects() {
-        if(this._class_template["id"] && this._class_template["id"] !== "") {
+        if(this.dataC["id"] && this.dataC["id"] !== "") {
             return {
-                "class": this._class_template,
-                "object": this._object_template
+                "class": this.dataC,
+                "object": this.dataO
             }
         } else {
             return {
-                "object": this._object_template
+                "object": this.dataO
             }
         }
     }
@@ -98,7 +98,7 @@ class Pass {
             resp = await this._init.google_client.request({
                 url: `${this._objectUrl}/${this._objectId}`,
                 method: "PUT",
-                data: this._object_template
+                data: this.dataO
             });
             return;
         };
@@ -116,7 +116,7 @@ class Pass {
                 resp = await this._init.google_client.request({
                     url: this._objectUrl,
                     method: "POST",
-                    data: this._object_template
+                    data: this.dataO
                 });
             }
         }
@@ -133,7 +133,7 @@ class Pass {
             resp = await this._init.google_client.request({
                 url: `${this._classUrl}/${this._classId}`,
                 method: "PUT",
-                data: this._class_template
+                data: this.dataC
             });
             return;
         };
@@ -151,7 +151,7 @@ class Pass {
                 resp = await this._init.google_client.request({
                     url: this._classUrl,
                     method: "POST",
-                    data: this._class_template
+                    data: this.dataC
                 });
             }
         }
