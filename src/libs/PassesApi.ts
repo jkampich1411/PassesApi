@@ -278,6 +278,8 @@ class BoardingPass extends Pass {
             that.dataC = classD;
             that.dataO = objecD;
 
+            return that;
+
         } catch (e: any) {
             let r = e.response;
 
