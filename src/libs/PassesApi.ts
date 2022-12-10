@@ -545,7 +545,7 @@ class BoardingPass extends Pass {
     }
     
     setHeroImage(label: string, url?: string) {
-        if(url) {
+        if(!url) {
             let heroImage = WalletImage.generate(images[label.toLowerCase()]["hero"], 
                 [{"language": "en", "value": label + " Hero Image"}],
                 {"language": "en", "value": label + " Hero Image"});
