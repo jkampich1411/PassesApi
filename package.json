@@ -1,6 +1,6 @@
 {
   "name": "@jkampich1411/passesapi",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "description": "API for Google Wallet Passes",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
