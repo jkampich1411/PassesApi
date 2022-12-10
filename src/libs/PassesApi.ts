@@ -263,13 +263,13 @@ class BoardingPass extends Pass {
             that.dataC = await that._init.google_client.request({
                 url: `${that._classUrl}/${that._classId}`,
                 method: "GET"
-            });
+            }).data;
 
 
             that.dataO = await that._init.google_client.request({
                 url: `${that._objectUrl}/${that._objectId}`,
                 method: "GET"
-            });
+            }).data;
 
             that.dataO.classReference = undefined;
             that._postable = false;
