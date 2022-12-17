@@ -289,46 +289,6 @@ class BoardingPass extends Pass {
         }
     }
 
-    prepare(data: BoardingPass_Pass) {
-        this.setBarcode(data["barcode"]);
-        // Barcode set!
-
-        this.setBackgroundColour(data["bgcolour"]);
-        // Background colour set!
-
-        this.setBrdStnInfo(data["flight"]);
-        // Boarding Seating Info set!
-
-        this.setReservInfo(data["person"]);
-        // Reservation Info set!
-
-        this.setDepartTime(data["flight"]);
-        // Local Scheduled Departure set!
-
-        this.setBoardingTime(data["flight"]);
-        // Boarding Time set!
-
-        this.setCarrier(data["flight"]);
-        // Carrier set!
-
-        this.setAirlineLogo(data["flight"]["carrier_label"]);
-        // Airline Logo Set
-
-        this.setOrigin(data["flight"]);
-        // Origin set!
-
-        this.setDestination(data["flight"]);
-        // Destination set!
-
-        this.setHeroImage(data["flight"]["carrier_label"]);
-        // Hero Image set!
-
-        this.setAirlineName(data["flight"]["carrier_label"]);
-        // Airline name set!
-
-        this.setLocations(data["locations"]);
-    }
-
     setAirlineName(carrier_label: string) {
         this.dataC["issuerName"] = carrier_label;
     }
