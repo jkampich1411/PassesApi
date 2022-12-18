@@ -8,13 +8,6 @@ const SCOPES = [
     "https://www.googleapis.com/auth/wallet_object.issuer"
 ];
 
-const images: any = {
-    "austrian airlines": {
-        "hero": "https://www.dropbox.com/s/ashagvo9r45ttf7/austrian-airlines-logo.png?dl=1",
-        "logo": "https://www.dropbox.com/s/zxkg92plt3wx65j/austrian-airlines-icon.png?dl=1"
-    }
-};
-
 class Setup {
     google_client: any;
     issuer_id: string | number;
@@ -448,20 +441,12 @@ class BoardingPass extends Pass {
         this.dataC.localBoardingDateTime = tempIso.join("");
     }
 
-    setAirlineLogo(label: string, url?: string) {
-        if(!url) {    
-            let airLnLogo = WalletImage.generate(images[label.toLowerCase()]["logo"],
-                [{"language": "en", "value": label + " Logo Image"}],
-                {"language": "en", "value": label + " Logo Image"});
-
-            this.dataC.flightHeader["carrier"]["airlineLogo"] = airLnLogo;
-        } else {
-            let airLnLogo = WalletImage.generate(url,
-                [{"language": "en", "value": label + " Logo Image"}],
-                {"language": "en", "value": label + " Logo Image"});
+    setAirlineLogo(label: string, url: string) {
+        let airLnLogo = WalletImage.generate(url,
+            [{"language": "en", "value": label + " Logo Image"}],
+            {"language": "en", "value": label + " Logo Image"});
             
-            this.dataC.flightHeader["carrier"]["airlineLogo"] = airLnLogo;
-        }
+        this.dataC.flightHeader["carrier"]["airlineLogo"] = airLnLogo;
     }
     
     setCarrier(flight: Partial<BoardingPass_Flight>) {
@@ -504,18 +489,11 @@ class BoardingPass extends Pass {
         this.dataC.destination["airportIataCode"] = flight["from_to"][1]["short"];
     }
     
-    setHeroImage(label: string, url?: string) {
-        if(!url) {
-            let heroImage = WalletImage.generate(images[label.toLowerCase()]["hero"], 
-                [{"language": "en", "value": label + " Hero Image"}],
-                {"language": "en", "value": label + " Hero Image"});
-            this.dataC.heroImage = heroImage;
-        } else {
-            let heroImage = WalletImage.generate(url,
-                [{"language": "en", "value": label + " Hero Image"}],
-                {"language": "en", "value": label + " Hero Image"});
-            this.dataC.heroImage = heroImage;
-        }
+    setHeroImage(label: string, url: string) {
+        let heroImage = WalletImage.generate(url,
+            [{"language": "en", "value": label + " Hero Image"}],
+            {"language": "en", "value": label + " Hero Image"});
+        this.dataC.heroImage = heroImage;
     }
 
     setLocations(loc: Array<Location>) {
