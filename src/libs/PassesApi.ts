@@ -326,14 +326,14 @@ class BoardingPass extends Pass {
         delete brdstn["seatAssignment"];
     }
     
-    setReservInfo(person: Partial<BoardingPass_Person>) {
+    setReservInfo(person: BoardingPass_Person) {
         this.dataO.passengerName = person.name;
 
         let reserv = this.dataO.reservationInfo;
 
         reserv["confirmationCode"] = person["reference"];
 
-        if(person["ff_program"] === "" || person["ff_number"]) {
+        if(person["ff_program"] === "" || person["ff_number"] === "" || person["ff_program"] === undefined || person["ff_number"] === undefined || person["ff_program"] === null || person["ff_number"] === null) {
             delete reserv.frequentFlyerInfo;
             return;
         }
