@@ -40,3 +40,5 @@ export function createISO8601(date: Date, time?: string): string {
         "00.000"
     ].join("");
 }
+
+export const URL_PREFIX = "https://walletobjects.googleapis.com/walletobjects/v1/";
