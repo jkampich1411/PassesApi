@@ -13,7 +13,7 @@ This is a utility package to create [Google Wallet](https://developers.google.co
 |Event Tickets|❌|Coming soon!|
 |Closed-Loop and Open-Loop Transit|❌|NDA required|
 |Transit passes|❌|Part coming soon!|
-|Generic Pass|❌|Coming soon!|
+|Generic Pass|✔️|Open Beta! Report bugs under issues tab!|
 
 ### Quick Start Tutorial
 1. First, you need to setup a Google Wallet issuer account
