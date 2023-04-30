@@ -1,3 +1,5 @@
+import { type } from "os";
+
 export abstract class Langs {
     static genLocalString = (langsJson: Array<TranslatedString> | "EMPTY", defaults: TranslatedString): LocalizedString => {
         if (langsJson === "EMPTY") {
@@ -24,18 +26,14 @@ export interface TranslatedString {
     value: string;
 }
 
-export function instanceOfLocalizedString(object: string | LocalizedString): boolean {
-    if(typeof object === "string") {
-        return true;
-    } else {
+export function instanceOfLocalizedString(object: any): object is LocalizedString {
+    if(typeof object === "object") {
         return 'defaultValue' in object;
-    }
+    } else return false;
 }
 
-export function instanceOfTranslatedString(object: string | TranslatedString): boolean {
-    if(typeof object === "string") {
-        return true;
-    } else {
+export function instanceOfTranslatedString(object: any): object is LocalizedString {
+    if(typeof object === "object") {
         return 'defaultValue' in object;
-    }
+    } else return false;
 }
