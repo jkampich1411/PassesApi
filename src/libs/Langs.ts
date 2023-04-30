@@ -24,10 +24,18 @@ export interface TranslatedString {
     value: string;
 }
 
-export function instanceOfLocalizedString(object: any): object is LocalizedString {
-    return 'defaultValue' in object;
+export function instanceOfLocalizedString(object: string | LocalizedString): boolean {
+    if(typeof object === "string") {
+        return true;
+    } else {
+        return 'defaultValue' in object;
+    }
 }
 
-export function instanceOfTranslatedString(object: any): object is TranslatedString {
-    return 'value' in object;
+export function instanceOfTranslatedString(object: string | TranslatedString): boolean {
+    if(typeof object === "string") {
+        return true;
+    } else {
+        return 'defaultValue' in object;
+    }
 }
