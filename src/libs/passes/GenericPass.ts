@@ -371,7 +371,7 @@ class GenericPass extends Base {
     }
 
     addDetail(detail: Detail) {
-        let detailsItemJson: DetailsItem;
+        let detailsItemJson: DetailsItem = { item: { firstValue: { fields: [] } } };
         detailsItemJson.item.firstValue.fields.push({
             "fieldPath": `object.detailsModulesData['${detail.id}']`
         });
