@@ -18,12 +18,18 @@ class GenericPass extends Base {
         "header": {}, // LocalizedString!
         "logo": {}, // Image!
         "hexBackgroundColor": "",
-        "notifications": {},
+        "notifications": {
+            "expiryNotification": {},
+            "upcomingNotification": {}
+        },
         "id": "",
         "classId": "",
         "barcode": {},
         "heroImage": {}, // Image!
-        "validTimeInterval": {},
+        "validTimeInterval": {
+            "start": {},
+            "end": {}
+        },
         "imageModulesData": [ // _imdTemp
         ],
         "textModulesData": [ // _tmdTemp
