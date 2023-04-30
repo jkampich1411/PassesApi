@@ -265,7 +265,7 @@ class GenericPass extends Base {
             if(e.type === "oneItem") {
                 let item = e.items[0]
 
-                let oneItemJson: OneItem;
+                let oneItemJson: OneItem = { oneItem: { item: { firstValue: { fields: [] } } } };
                 oneItemJson.oneItem.item.firstValue.fields.push({
                     "fieldPath": `object.textModulesData['${item.item.id}']`
                 });
@@ -289,7 +289,7 @@ class GenericPass extends Base {
                 let firstElement = e.items.filter(item => item.location === "start")[0];
                 let lastElement = e.items.filter(item => item.location === "end")[0];
 
-                let twoItemsJson: TwoItems;
+                let twoItemsJson: TwoItems = { twoItems: { startItem: { firstValue: { fields: [] } }, endItem: { firstValue: { fields: [] } } } };
 
                 twoItemsJson.twoItems.startItem.firstValue.fields.push({
                     fieldPath: `object.textModulesData['${firstElement.item.id}']`
@@ -325,7 +325,7 @@ class GenericPass extends Base {
                 let middleElement = e.items.filter(item => item.location === "middle")[0];
                 let lastElement = e.items.filter(item => item.location === "end")[0];
 
-                let threeItemsJson: ThreeItems;
+                let threeItemsJson: ThreeItems = { threeItems: { startItem: { firstValue: { fields: [] } }, middleItem: { firstValue: { fields: [] } }, endItem: { firstValue: { fields: [] } } } };
 
                 threeItemsJson.threeItems.startItem.firstValue.fields.push({
                     fieldPath: `object.textModulesData['${firstElement.item.id}']`
