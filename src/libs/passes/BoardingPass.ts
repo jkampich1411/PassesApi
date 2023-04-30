@@ -1,4 +1,4 @@
-import { Pass } from './Pass';
+import { Pass as Base } from './Pass';
 import { Setup } from '../Setup';
 
 import { WalletImage } from '../WalletImage';
@@ -7,7 +7,7 @@ import { Barcode } from '../types/Barcode';
 
 import { URL_PREFIX } from '../utils';
 
-class BoardingPass extends Pass {
+class BoardingPass extends Base {
    _object_template: any = {
         "passengerName": "",
         "boardingAndSeatingInfo": {

@@ -1,4 +1,4 @@
-import { Pass } from './Pass';
+import { Pass as Base } from './Pass';
 import { Setup } from '../Setup';
 
 import { createISO8601, URL_PREFIX } from '../utils';
@@ -11,7 +11,7 @@ import { MultipleDevicesAndHoldersAllowedStatusType } from '../types/MultipleDev
 import { ViewUnlockRequirementType } from '../types/ViewUnlockRequirementType';
 import { State } from '../types/State';
 
-class GenericPass extends Pass {
+class GenericPass extends Base {
     _object_template: any = {
         "cardTitle": {}, // LocalizedString!
         "subheader": {}, // LocalizedString!
